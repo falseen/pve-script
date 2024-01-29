@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 与用户交互获取模板ID、克隆数量和虚拟机名称
-read -p "请输入模板虚拟机的ID（默认为1000）: " template_id
-template_id=${template_id:-1000}
+read -p "请输入模板虚拟机的ID（默认为100）: " template_id
+template_id=${template_id:-100}
 
 read -p "请输入要克隆的虚拟机数量: " num_clones
 
