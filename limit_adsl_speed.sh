@@ -69,23 +69,23 @@ apply_tc_rules() {
 
 	# 应用带宽限制
 	# 删除已存在的HTB队列规则（如果存在）
-	echo "删除 $DEV 上的现有HTB队列规则..."
+	#echo "删除 $DEV 上的现有HTB队列规则..."
 	tc qdisc del dev $DEV root 2>/dev/null || echo "HTB队列规则不存在，继续..."
 
 	# 删除已存在的ingress队列规则（如果存在）
-	echo "删除 $DEV 上的现有ingress队列规则..."
+	#echo "删除 $DEV 上的现有ingress队列规则..."
 	tc qdisc del dev $DEV ingress 2>/dev/null || echo "ingress队列规则不存在，继续..."
 
 	# 添加HTB队列规则
-	echo "添加HTB队列规则到 $DEV..."
+	#echo "添加HTB队列规则到 $DEV..."
 	tc qdisc add dev $DEV root handle 1: htb default 1 r2q 10 direct_qlen 1000
 
 	# 添加ingress队列规则
-	echo "添加ingress队列规则到 $DEV..."
+	#echo "添加ingress队列规则到 $DEV..."
 	tc qdisc add dev $DEV handle ffff: ingress
 
 	# 添加过滤器规则
-	echo "添加上传过滤器规则到 $DEV..."
+	#echo "添加上传过滤器规则到 $DEV..."
 	tc filter add dev $DEV parent ffff: protocol all pref 50 basic police rate $UPLOAD_RATE_KBIT burst 1Mb mtu 64Kb action drop
 	echo "带宽限制 $rate 已应用于虚拟机 $vmid 的接口 $iface."
 	if [ -n "$DOWNLOAD_RATE_KBIT" ]; then
