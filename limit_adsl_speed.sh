@@ -19,6 +19,16 @@ DOWNLOAD_RATE_KBIT=$((${DOWNLOAD_RATE} * 1024))Kbit
 echo "上传带宽限制被设置为: $UPLOAD_RATE_KBIT"
 echo "下载带宽限制被设置为: $DOWNLOAD_RATE_KBIT"
 read -p "请输入虚拟机的VMID（留空以选择所有虚拟机）:" VMID
+read -p "请选择网卡（1表示第一张网卡，2表示第二张网卡）:" NIC_CHOICE
+if [ "$NIC_CHOICE" = "1" ]; then
+    DEV_SUFFIX="i0"
+elif [ "$NIC_CHOICE" = "2" ]; then
+    DEV_SUFFIX="i1"
+else
+    echo "无效的网卡选择。"
+    exit 1
+fi
+
 
 # 创建Perl钩子脚本
 cat > $HOOK_SCRIPT_PATH <<EOF
@@ -32,7 +42,7 @@ my \$phase = shift;
 
 if (\$phase eq 'post-start') {
     print "\$vmid is starting, setting upload bandwidth limit to $UPLOAD_RATE_KBIT.\n";
-    my \$DEV = "tap\${vmid}i0";
+    my \$DEV = "tap\${vmid}${DEV_SUFFIX}";
     
     # 删除旧的带宽限制规则
     system("tc qdisc del dev \$DEV root 2>/dev/null || echo 'HTB is not exist, continue...'");
@@ -65,7 +75,7 @@ chmod +x $HOOK_SCRIPT_PATH
 apply_tc_rules() {
     local vmid=$1
     local rate=$2
-    local DEV="tap${vmid}i0"
+    local DEV="tap${vmid}${DEV_SUFFIX}"
 
 	# 应用带宽限制
 	# 删除已存在的HTB队列规则（如果存在）
