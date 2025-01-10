@@ -1,6 +1,4 @@
 #!/bin/bash
-#pve虚拟机流量镜像
-
 
 # 显示菜单
 show_menu() {
