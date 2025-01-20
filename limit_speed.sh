@@ -7,6 +7,11 @@ HOOK_SCRIPT_PATH="$SNIPPETS_DIR/$HOOK_SCRIPT_NAME"
 STORAGE_ID="local"
 CONFIG_DIR="/etc/pve/qemu-server"
 
+if [ ! -d "$SNIPPETS_DIR" ]; then
+    mkdir -p "$SNIPPETS_DIR"
+    echo "已创建目录 $SNIPPETS_DIR"
+fi
+
 # 函数：设置带宽限制
 set_bandwidth_limit() {
     local UPLOAD_RATE_KBIT="$1"
@@ -138,14 +143,14 @@ while true; do
 
     case $choice in
         1) # 设置带宽限制
-            read -p "请输入上传带宽限制（例如 '10Mbit'）:" UPLOAD_RATE
+            read -p "请输入上传带宽限制（例如 '100Mbit'或'100'）:" UPLOAD_RATE
             if [[ ! "$UPLOAD_RATE" =~ ^[0-9]+(Mbit)?$ ]]; then
                 echo "无效的上传带宽格式。请使用例如 '10Mbit' 或 '10' 的格式。"
                 continue
             fi
             UPLOAD_RATE_KBIT=$(( ${UPLOAD_RATE%%Mbit} * 1024 ))Kbit
 
-            read -p "请输入下载带宽限制（例如 '100Mbit'，留空则不限制）:" DOWNLOAD_RATE
+            read -p "请输入下载带宽限制（例如 '100Mbit'或'100'，留空则不限制）:" DOWNLOAD_RATE
             if [[ ! -z "$DOWNLOAD_RATE" ]]; then
                 if [[ ! "$DOWNLOAD_RATE" =~ ^[0-9]+(Mbit)?$ ]]; then
                     echo "无效的下载带宽格式。请使用例如 '100Mbit' 或 '100' 的格式。"
